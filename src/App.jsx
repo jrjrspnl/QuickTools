@@ -2,6 +2,7 @@ import React from "react";
 import NavBar from "./components/NavBar";
 import Hero from "./components/Hero";
 import Cards from "./components/Cards";
+import Footer from "./components/Footer";
 
 const App = () => {
   return (
@@ -10,6 +11,7 @@ const App = () => {
       <div className="flex flex-col max-w-7xl mx-auto gap-10">
         <Hero />
         <Cards />
+        <Footer />
       </div>
     </div>
   );
