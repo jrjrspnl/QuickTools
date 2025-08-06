@@ -8,6 +8,7 @@ export const CardsContent = [
     title: "Remove Background",
     description:
       "Easily remove the background from any image in seconds with just one click.",
+    route: "/bg-remover",
   },
   {
     id: 2,
@@ -15,6 +16,7 @@ export const CardsContent = [
     title: "Convert Files",
     description:
       "Convert image formats such as PNG, JPG, WebP, and more in one click.",
+    route: "/file-converter",
   },
   {
     id: 3,
@@ -22,5 +24,6 @@ export const CardsContent = [
     title: "Image Compressor",
     description:
       "Shrink your image file size by reducing quality — perfect for faster uploads and saving storage.",
+    route: "/file-compressor",
   },
 ];
