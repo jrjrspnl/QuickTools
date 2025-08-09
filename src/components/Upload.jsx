@@ -7,18 +7,40 @@ export const UploadImage = ({
   image,
   onFilesAccepted,
   showPreview = true,
+  acceptedFileTypes = null, // null means accept all files
 }) => {
   const [files, setFiles] = useState([]);
 
   const onDrop = useCallback(
-    (acceptedFiles) => {
+    (acceptedFiles, rejectedFiles) => {
+      if (rejectedFiles.length > 0) {
+        // Handle rejected files
+        const errorMessage = rejectedFiles[0].errors[0].message;
+        if (onFilesAccepted) {
+          onFilesAccepted([], errorMessage);
+        }
+        return;
+      }
+
       setFiles(acceptedFiles);
       if (onFilesAccepted) onFilesAccepted(acceptedFiles);
     },
     [onFilesAccepted]
   );
 
-  const { getRootProps, getInputProps, isDragActive } = useDropzone({ onDrop });
+  // Configure dropzone options based on acceptedFileTypes
+  const dropzoneOptions = {
+    onDrop,
+    maxFiles: 1,
+  };
+
+  // Only add accept configuration if acceptedFileTypes is provided
+  if (acceptedFileTypes) {
+    dropzoneOptions.accept = acceptedFileTypes;
+  }
+
+  const { getRootProps, getInputProps, isDragActive } =
+    useDropzone(dropzoneOptions);
 
   return (
     <div
