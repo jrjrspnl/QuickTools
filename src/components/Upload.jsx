@@ -31,7 +31,7 @@ export const UploadImage = ({
       {image && files.length === 0 && (
         <img
           src={image}
-          className="w-96 rounded-4xl -rotate-5 translate-y-10 hidden lg:flex shadow-lg transition hover:scale-105 duration-300"
+          className="w-96 mr-10 rounded-4xl -rotate-5 translate-y-10 hidden lg:flex shadow-lg transition hover:scale-105 duration-300"
           alt=""
         />
       )}
