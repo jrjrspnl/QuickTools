@@ -10,7 +10,7 @@ const Hero = () => {
               just image editing that works.
             </span>
           </h1>
-          <p className="text-sm md:text-md text-center max-w-2xl my-5 text-neutral-600">
+          <p className="text-base md:text-lg md:text-md text-center max-w-2xl mt-5 text-neutral-600">
             Fast, simple, and no BS. Remove backgrounds, convert between
             formats, and compress your images — all without the annoying ads.
           </p>
