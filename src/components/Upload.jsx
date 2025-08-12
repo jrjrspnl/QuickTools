@@ -5,42 +5,26 @@ import { useDropzone } from "react-dropzone";
 export const UploadImage = ({
   heading,
   image,
-  onFilesAccepted,
-  showPreview = true,
-  acceptedFileTypes = null, // null means accept all files
+  multiple = false,
+  accept,
+  onDropFiles,
 }) => {
-  const [files, setFiles] = useState([]);
+  const [files, setFiles] = useState([]); // to store the files
 
   const onDrop = useCallback(
-    (acceptedFiles, rejectedFiles) => {
-      if (rejectedFiles.length > 0) {
-        // Handle rejected files
-        const errorMessage = rejectedFiles[0].errors[0].message;
-        if (onFilesAccepted) {
-          onFilesAccepted([], errorMessage);
-        }
-        return;
-      }
-
+    (acceptedFiles, fileRejections) => {
       setFiles(acceptedFiles);
-      if (onFilesAccepted) onFilesAccepted(acceptedFiles);
+      if (onDropFiles) {
+        onDropFiles(acceptedFiles, fileRejections); // <-- notify parent
+      }
     },
-    [onFilesAccepted]
+    [onDropFiles]
   );
-
-  // Configure dropzone options based on acceptedFileTypes
-  const dropzoneOptions = {
+  const { getRootProps, getInputProps, isDragActive } = useDropzone({
     onDrop,
-    maxFiles: 1,
-  };
-
-  // Only add accept configuration if acceptedFileTypes is provided
-  if (acceptedFileTypes) {
-    dropzoneOptions.accept = acceptedFileTypes;
-  }
-
-  const { getRootProps, getInputProps, isDragActive } =
-    useDropzone(dropzoneOptions);
+    multiple,
+    accept,
+  });
 
   return (
     <div
@@ -50,20 +34,18 @@ export const UploadImage = ({
           : "flex justify-center lg:justify-around mt-10 lg:my-10 gap-10 px-5 text-neutral-800 items-center "
       }
     >
-      {image && files.length === 0 && (
-        <img
-          src={image}
-          className="w-96 mr-10 rounded-4xl -rotate-5 translate-y-10 hidden lg:flex shadow-lg transition hover:scale-105 duration-300"
-          alt=""
-        />
-      )}
+      <img
+        src={image}
+        className="w-96 mr-10 rounded-4xl -rotate-5 translate-y-10 hidden lg:flex shadow-lg transition hover:scale-105 duration-300"
+        alt=""
+      />
 
       <div className="flex flex-col gap-5">
         <h1 className="text-3xl md:text-4xl max-w-2xl font-semibold text-center ">
           {heading}
         </h1>
 
-        {files.length === 0 ? (
+        {files.length === 0 && (
           <div
             {...getRootProps()}
             className={`h-64 w-full bg-neutral-50 rounded-xl shadow-xl border-2 border-dashed ${
@@ -85,19 +67,6 @@ export const UploadImage = ({
               </p>
             </div>
           </div>
-        ) : (
-          showPreview && (
-            <div className={`flex py-5 max-w-lg mx-auto`}>
-              {files.map((file) => (
-                <img
-                  key={file.name}
-                  src={URL.createObjectURL(file)}
-                  alt={file.name}
-                  className="w-96 object-cover rounded-lg border border-violet-400"
-                />
-              ))}
-            </div>
-          )
         )}
       </div>
     </div>
