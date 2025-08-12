@@ -5,22 +5,21 @@ import { UploadImage } from "../components/Upload";
 const BgRemover = () => {
   const [outputImage, setOutputImage] = useState(null);
   const [originalFileName, setOriginalFileName] = useState("");
+  const [selectedFile, setSelectedFile] = useState(null); // for preview
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const API_KEY = import.meta.env.VITE_REMOVEBG_API_KEY;
 
-  const handleFilesAccepted = async (files, errorMessage) => {
-    // Handle file type errors from dropzone
-    if (errorMessage) {
+  const handleFilesAccepted = async (files, rejectedFiles) => {
+    if (rejectedFiles.length > 0) {
       setError("Please upload a valid image file (PNG, JPEG, JPG, or WEBP)");
       return;
     }
-
     if (files.length === 0) return;
 
     const file = files[0];
+    setSelectedFile(file); // Save for preview
 
-    // Additional validation as backup
     const allowedTypes = ["image/png", "image/jpeg", "image/jpg", "image/webp"];
     const allowedExtensions = [".png", ".jpeg", ".jpg", ".webp"];
 
@@ -46,7 +45,7 @@ const BgRemover = () => {
 
     try {
       setLoading(true);
-      setError(null); // Clear previous errors
+      setError(null);
 
       const res = await fetch("https://api.remove.bg/v1.0/removebg", {
         method: "POST",
@@ -57,17 +56,14 @@ const BgRemover = () => {
       });
 
       if (!res.ok) {
-        // Get error details from response
         const errorText = await res.text();
         let errorMessage = `HTTP Error ${res.status}`;
-
         try {
           const errorData = JSON.parse(errorText);
-          if (errorData.errors && errorData.errors.length > 0) {
+          if (errorData.errors?.length > 0) {
             errorMessage = errorData.errors[0].title || errorMessage;
           }
         } catch {
-          // If parsing fails, use the status-based message
           switch (res.status) {
             case 400:
               errorMessage = "Invalid image or request format";
@@ -91,7 +87,6 @@ const BgRemover = () => {
               errorMessage = `HTTP Error ${res.status} - ${res.statusText}`;
           }
         }
-
         throw new Error(errorMessage);
       }
 
@@ -123,6 +118,7 @@ const BgRemover = () => {
   const handleRetry = () => {
     setOutputImage(null);
     setOriginalFileName("");
+    setSelectedFile(null);
     setError(null);
   };
 
@@ -144,23 +140,37 @@ const BgRemover = () => {
           </div>
           <button
             onClick={handleRetry}
-            className="cursor-pointer border-2 border-violet-400 py-2 px-5 flex items-center gap-2 rounded-full shadow-md hover:bg-violet-500 transition-colors duration-300 text-neutral-800 hover:text-white"
+            className="cursor-pointer border-2 border-violet-400 py-2 px-5 rounded-full hover:bg-violet-500 transition-colors duration-300 text-neutral-800 hover:text-white"
           >
             Try Again
           </button>
         </div>
       ) : !outputImage ? (
-        <UploadImage
-          heading="Upload an image to remove the background"
-          image={alden}
-          showPreview={false}
-          onFilesAccepted={handleFilesAccepted}
-          acceptedFileTypes={{
-            "image/png": [".png"],
-            "image/jpeg": [".jpeg", ".jpg"],
-            "image/webp": [".webp"],
-          }}
-        />
+        <>
+          <UploadImage
+            heading="Upload an image to remove the background"
+            image={alden}
+            multiple={false}
+            accept={{
+              "image/png": [".png"],
+              "image/jpeg": [".jpeg", ".jpg"],
+              "image/webp": [".webp"],
+            }}
+            onDropFiles={handleFilesAccepted}
+          />
+
+          {/* Preview here instead of inside UploadImage */}
+          {selectedFile && (
+            <div className="mt-5">
+              <h2 className="text-center text-sm text-gray-500">Preview</h2>
+              <img
+                src={URL.createObjectURL(selectedFile)}
+                alt="Preview"
+                className="w-96 object-cover rounded-lg border border-violet-400"
+              />
+            </div>
+          )}
+        </>
       ) : (
         <div className="flex flex-col gap-5">
           <h2 className="text-xl font-semibold text-center text-violet-500">
@@ -171,17 +181,19 @@ const BgRemover = () => {
             className="w-96 border-2 border-violet-400 rounded-lg"
             alt="Remove Bg"
           />
-          <div className="flex justify-between gap-3">
+          <div className="flex justify-center gap-4">
             <button
               onClick={handleRetry}
-              className="cursor-pointer border-2 border-violet-400 py-2 px-5 flex items-center gap-2 rounded-full shadow-md hover:bg-violet-500 transition-colors duration-300 text-neutral-800 hover:text-white"
+              className="cursor-pointer border-2 border-violet-400 py-2 px-6 rounded-full hover:bg-violet-500 transition-colors duration-300 text-neutral-800 hover:text-white flex items-center gap-2"
             >
-              Try Again
+              <RotateCcw size={16} />
+              Try Another
             </button>
             <button
               onClick={handleDownload}
-              className="text-white cursor-pointer bg-violet-400 py-2 px-5 flex items-center gap-2 rounded-full shadow-md hover:bg-violet-500 transition-colors duration-300"
+              className="text-white cursor-pointer bg-violet-400 py-2 px-6 rounded-full hover:bg-violet-500 transition-colors duration-300 flex items-center gap-2"
             >
+              <Download size={16} />
               Download
             </button>
           </div>
