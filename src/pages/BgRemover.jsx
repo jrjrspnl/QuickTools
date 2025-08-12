@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import alden from "../assets/bg-remove-alden.png";
 import { UploadImage } from "../components/Upload";
+import { Download, RotateCcw } from "lucide-react";
 
 const BgRemover = () => {
   const [outputImage, setOutputImage] = useState(null);
