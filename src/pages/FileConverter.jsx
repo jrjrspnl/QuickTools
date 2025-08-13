@@ -7,14 +7,13 @@ const FileConverter = () => {
   const [selectedFile, setSelectedFile] = useState([]); // for preview
 
   const handleFileDrop = (acceptedFiles, fileRejections) => {
-    console.log("Accepted files:", acceptedFiles);
-    // Process your files here
-    acceptedFiles.forEach((file) => {
-      console.log("File name:", file.name);
-      console.log("File size:", file.size);
-      console.log("File type:", file.type);
-    });
     setSelectedFile(acceptedFiles);
+  };
+
+  const removeFile = (filetoRemove) => {
+    setSelectedFile((files) =>
+      files.filter((file) => file.name !== filetoRemove.name)
+    );
   };
 
   return (
@@ -25,6 +24,14 @@ const FileConverter = () => {
           image={ConvertFiles}
           multiple={true}
           onDropFiles={handleFileDrop}
+          accept={{
+            "image/png": [".png"],
+            "image/jpeg": [".jpeg", ".jpg"],
+            "image/webp": [".webp"],
+            "application/pdf": [".pdf"],
+            "application/vnd.openxmlformats-officedocument.wordprocessingml.document":
+              [".docx"],
+          }}
         />
       ) : (
         <div className="mt-10 max-w-xl mx-auto w-full">
@@ -33,10 +40,16 @@ const FileConverter = () => {
               <FilePlus size={16} />
               Add more files
             </button>
+            <h1 className="text-sm text-neutral-500">
+              Added {selectedFile.length} Files
+            </h1>
           </div>
 
           {selectedFile.map((upload) => (
-            <div className="text-sm md:text-base flex justify-between border border-violet-400 rounded-md  bg-white max-w-2xl mx-auto  text-neutral-600 p-3 my-2">
+            <div
+              key={upload.name}
+              className="text-sm md:text-base flex justify-between border border-violet-400 rounded-md  bg-white max-w-2xl mx-auto  text-neutral-600 p-3 my-2"
+            >
               <div className="flex flex-col max-w-5xl ">
                 <h1>{upload.name}</h1>
               </div>
@@ -49,14 +62,14 @@ const FileConverter = () => {
                   <option>PDF</option>
                   <option>WebP</option>
                 </select>
-                <CircleX className="text-neutral-500 cursor-pointer" />
+                <CircleX
+                  onClick={() => removeFile(upload)}
+                  className="text-neutral-500 cursor-pointer"
+                />
               </div>
             </div>
           ))}
-          <div className="flex justify-between items-center mt-3">
-            <h1 className="text-sm text-neutral-500">
-              Added {selectedFile.length} Files
-            </h1>
+          <div className="flex justify-end  mt-3">
             <button className="text-white cursor-pointer bg-violet-400 py-2 px-6 rounded-full hover:bg-violet-500 transition-colors duration-300 flex items-center gap-2">
               <Download size={16} />
               Convert
