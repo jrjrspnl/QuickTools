@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import React, { useState } from "react";
 import { UploadImage } from "../components/Upload";
 import ConvertFiles from "../assets/convert-files.png";
 import { ImGift } from "react-icons/im";
@@ -6,7 +6,7 @@ import { CircleX, Download, FilePlus } from "lucide-react";
 const FileConverter = () => {
   const [selectedFile, setSelectedFile] = useState([]); // for preview
 
-  const handleFileDrop = (acceptedFiles, fileRejections) => {
+  const handleFileDrop = (acceptedFiles) => {
     setSelectedFile(acceptedFiles);
   };
 
@@ -15,8 +15,6 @@ const FileConverter = () => {
       files.filter((file) => file.name !== fileName.name)
     );
   };
-
-  const inputRef = useRef < HTMLInputElement > null;
 
   const addFiles = (e) => {
     const filesArray = Array.from(e.target.files);
