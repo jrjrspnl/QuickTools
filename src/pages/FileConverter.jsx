@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import { UploadImage } from "../components/Upload";
 import ConvertFiles from "../assets/convert-files.png";
 import { ImGift } from "react-icons/im";
@@ -10,10 +10,18 @@ const FileConverter = () => {
     setSelectedFile(acceptedFiles);
   };
 
-  const removeFile = (filetoRemove) => {
+  const fileToRemove = (fileName) => {
     setSelectedFile((files) =>
-      files.filter((file) => file.name !== filetoRemove.name)
+      files.filter((file) => file.name !== fileName.name)
     );
+  };
+
+  const inputRef = useRef < HTMLInputElement > null;
+
+  const addFiles = (e) => {
+    const filesArray = Array.from(e.target.files);
+    setSelectedFile((prevFiles) => [...prevFiles, ...filesArray]);
+    e.target.value = ""; // reset so you can reselect the same file
   };
 
   return (
@@ -36,10 +44,15 @@ const FileConverter = () => {
       ) : (
         <div className="mt-10 max-w-xl mx-auto w-full">
           <div className="flex justify-between items-center">
-            <button className="cursor-pointer border-2 border-violet-400 py-1 px-5 rounded-lg hover:bg-violet-500 transition-colors duration-300 text-neutral-600 hover:text-white flex items-center gap-2">
-              <FilePlus size={16} />
-              Add more files
-            </button>
+            <input type="file" id="file" hidden multiple onChange={addFiles} />
+
+            <label htmlFor="file">
+              <span className="cursor-pointer border-2 border-violet-400 py-1 px-5 rounded-lg hover:bg-violet-500 transition-colors duration-300 text-neutral-600 hover:text-white flex items-center gap-2">
+                <FilePlus size={16} />
+                Add more files
+              </span>
+            </label>
+
             <h1 className="text-sm text-neutral-500">
               Added {selectedFile.length} Files
             </h1>
@@ -63,7 +76,7 @@ const FileConverter = () => {
                   <option>WebP</option>
                 </select>
                 <CircleX
-                  onClick={() => removeFile(upload)}
+                  onClick={() => fileToRemove(upload)}
                   className="text-neutral-500 cursor-pointer"
                 />
               </div>
