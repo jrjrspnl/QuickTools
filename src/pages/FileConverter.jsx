@@ -44,7 +44,14 @@ const FileConverter = () => {
       ) : (
         <div className="mt-10 max-w-xl mx-auto w-full">
           <div className="flex justify-between items-center">
-            <input type="file" id="file" hidden multiple onChange={addFiles} />
+            <input
+              type="file"
+              id="file"
+              hidden
+              multiple
+              accept=".png, .jpeg, .jpg, .webp, .pdf, .docx"
+              onChange={addFiles}
+            />
 
             <label htmlFor="file">
               <span className="cursor-pointer border-2 border-violet-400 py-1 px-5 rounded-lg hover:bg-violet-500 transition-colors duration-300 text-neutral-600 hover:text-white flex items-center gap-2">
