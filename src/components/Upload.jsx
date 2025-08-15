@@ -13,9 +13,11 @@ export const UploadImage = ({
 
   const onDrop = useCallback(
     (acceptedFiles, fileRejections) => {
+      // acceptedFiles: Array of files that passed validation
+      // fileRejections: Array of files that were rejected (wrong format, too big, etc.)
       setFiles(acceptedFiles);
       if (onDropFiles) {
-        onDropFiles(acceptedFiles, fileRejections); // <-- notify parent
+        onDropFiles(acceptedFiles, fileRejections); // Pass both to parent
       }
     },
     [onDropFiles]
