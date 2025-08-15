@@ -138,7 +138,7 @@ const FileConverter = () => {
           }}
         />
       ) : (
-        <div className="mt-10 max-w-xl mx-auto w-full">
+        <div className="mt-10 max-w-xl mx-auto w-full overflow-x-hidden">
           <div className="flex justify-between items-center">
             <input
               type="file"
