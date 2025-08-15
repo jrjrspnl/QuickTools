@@ -185,7 +185,6 @@ const FileConverter = () => {
                   <option value="pdf">PDF</option>
                   <option value="jpg">JPEG</option>
                   <option value="png">PNG</option>
-                  <option value="docx">DOCX</option>
                   <option value="webp">WebP</option>
                 </select>
               </div>
@@ -197,14 +196,24 @@ const FileConverter = () => {
           ))}
 
           <div className="flex justify-end mt-3">
-            <button
-              disabled={loading}
-              onClick={convertFiles}
-              className="text-white cursor-pointer bg-violet-400 py-2 px-6 rounded-full hover:bg-violet-500 transition-colors duration-300 flex items-center gap-2"
-            >
-              <Download size={16} />
-              {loading ? "Converting..." : "Convert"}
-            </button>
+            {loading ? (
+              <button
+                disabled={loading}
+                onClick={convertFiles}
+                className="text-white cursor-pointer bg-neutral-400 py-2 px-6 rounded-full  duration-300 flex items-center gap-2"
+              >
+                Converting...
+                <Download size={16} />
+              </button>
+            ) : (
+              <button
+                onClick={convertFiles}
+                className="text-white cursor-pointer bg-violet-400 py-2 px-6 rounded-full hover:bg-violet-500 transition-colors duration-300 flex items-center gap-2"
+              >
+                Convert
+                <Download size={16} />
+              </button>
+            )}
           </div>
         </div>
       )}
