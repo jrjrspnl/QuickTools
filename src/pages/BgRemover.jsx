@@ -19,7 +19,7 @@ const BgRemover = () => {
     if (files.length === 0) return;
 
     const file = files[0];
-    setSelectedFile(file); // Save for preview
+    setSelectedFile(file);
 
     const allowedTypes = ["image/png", "image/jpeg", "image/jpg", "image/webp"];
     const allowedExtensions = [".png", ".jpeg", ".jpg", ".webp"];
@@ -149,8 +149,10 @@ const BgRemover = () => {
       ) : !outputImage ? (
         <>
           <UploadImage
-            heading="Upload an image to remove the background"
+            heading="Remove your image’s background in seconds"
             image={alden}
+            buttonText="Upload image"
+            cardText="Or drop an image here"
             multiple={false}
             accept={{
               "image/png": [".png"],
