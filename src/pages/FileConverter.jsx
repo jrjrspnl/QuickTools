@@ -166,12 +166,19 @@ const FileConverter = () => {
               key={upload.file.name}
               className="text-sm md:text-base flex flex-col sm:flex-row justify-between border border-violet-400 rounded-md bg-white max-w-2xl mx-auto text-neutral-600 p-3 my-2"
             >
-              <div className="flex flex-col max-w-5xl">
+              <div className="flex justify-between max-w-5xl">
                 <h1>{upload.file.name}</h1>
+                <CircleX
+                  onClick={() => fileToRemove(upload)}
+                  className="text-neutral-500 cursor-pointer block sm:hidden"
+                />
               </div>
-              <div className="flex justify-between sm:flex-row text-center items-center gap-5">
-                <h1>Output:</h1>
+
+              <div className="flex  sm:flex-row text-center items-center gap-5">
+                <h1 className="text-sm text-left">Output:</h1>
+
                 <select
+                  className="border "
                   value={upload.targetFormat}
                   onChange={(e) => updateFormat(index, e.target.value)}
                 >
@@ -181,11 +188,11 @@ const FileConverter = () => {
                   <option value="docx">DOCX</option>
                   <option value="webp">WebP</option>
                 </select>
-                <CircleX
-                  onClick={() => fileToRemove(upload)}
-                  className="text-neutral-500 cursor-pointer"
-                />
               </div>
+              <CircleX
+                onClick={() => fileToRemove(upload)}
+                className="text-neutral-500 cursor-pointer hidden sm:block"
+              />
             </div>
           ))}
 
