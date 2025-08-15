@@ -185,14 +185,14 @@ const BgRemover = () => {
           <div className="flex justify-center gap-4">
             <button
               onClick={handleRetry}
-              className="cursor-pointer border-2 border-violet-400 py-2 px-6 rounded-full hover:bg-violet-500 transition-colors duration-300 text-neutral-600 hover:text-white flex items-center gap-2"
+              className="cursor-pointer border-2 text-sm sm:text-base border-violet-400 py-2 px-6 rounded-full hover:bg-violet-500 transition-colors duration-300 text-neutral-600 hover:text-white flex items-center gap-2"
             >
               <RotateCcw size={16} />
               Try Another
             </button>
             <button
               onClick={handleDownload}
-              className="text-white cursor-pointer bg-violet-400 py-2 px-6 rounded-full hover:bg-violet-500 transition-colors duration-300 flex items-center gap-2"
+              className="text-white cursor-pointer text-sm sm:text-base bg-violet-400 py-2 px-6 rounded-full hover:bg-violet-500 transition-colors duration-300 flex items-center gap-2"
             >
               <Download size={16} />
               Download
