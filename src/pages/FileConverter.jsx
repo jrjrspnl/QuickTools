@@ -5,34 +5,84 @@ import { CircleX, Download, FilePlus } from "lucide-react";
 
 const API_KEY = import.meta.env.VITE_CONVERT_API_KEY;
 
+const MAX_FILE_SIZE_MB = 50;
+const MAX_FILE_SIZE = MAX_FILE_SIZE_MB * 1024 * 1024;
+
+const ALLOWED_FORMATS = [
+  { label: "PDF", value: "pdf", mime: "application/pdf" },
+  { label: "JPEG", value: "jpg", mime: "image/jpeg" },
+  { label: "PNG", value: "png", mime: "image/png" },
+  { label: "WebP", value: "webp", mime: "image/webp" },
+];
+
+const ACCEPTED_FILE_TYPES = {
+  "image/png": [".png"],
+  "image/jpeg": [".jpeg", ".jpg"],
+  "image/webp": [".webp"],
+  "application/pdf": [".pdf"],
+  "application/vnd.openxmlformats-officedocument.wordprocessingml.document": [
+    ".docx",
+  ],
+};
+
+const getMimeType = (format) =>
+  ALLOWED_FORMATS.find((f) => f.value === format)?.mime ||
+  "application/octet-stream";
+
+const base64ToBlob = (base64, mimeType) => {
+  const byteCharacters = atob(base64);
+  const byteArray = new Uint8Array(byteCharacters.length);
+  for (let i = 0; i < byteCharacters.length; i++) {
+    byteArray[i] = byteCharacters.charCodeAt(i);
+  }
+  return new Blob([byteArray], { type: mimeType });
+};
+
 const FileConverter = () => {
   const [selectedFile, setSelectedFile] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [errors, setErrors] = useState([]);
+
+  const validateFile = (file) => {
+    if (file.size > MAX_FILE_SIZE) {
+      return `${file.name} exceeds ${MAX_FILE_SIZE_MB}MB limit.`;
+    }
+    return null;
+  };
 
   const handleFileDrop = (acceptedFiles) => {
-    const wrappedFiles = acceptedFiles.map((f) => ({
-      file: f,
-      targetFormat: "pdf",
-    }));
-    setSelectedFile(wrappedFiles);
+    const validFiles = [];
+    const newErrors = [];
+
+    acceptedFiles.forEach((f) => {
+      const error = validateFile(f);
+      if (error) {
+        newErrors.push(error);
+      } else {
+        validFiles.push({ file: f, targetFormat: "pdf" });
+      }
+    });
+
+    setSelectedFile(validFiles);
+    if (newErrors.length) setErrors(newErrors);
   };
 
   const addFiles = (e) => {
     const filesArray = Array.from(e.target.files);
-    const validFiles = filesArray
-      .filter((file) => {
-        if (file.size > 50 * 1024 * 1024) {
-          alert(`File ${file.name} is too large. Max 50MB.`);
-          return false;
-        }
-        return true;
-      })
-      .map((f) => ({
-        file: f,
-        targetFormat: "pdf",
-      }));
+    const validFiles = [];
+    const newErrors = [];
 
-    setSelectedFile((prevFiles) => [...prevFiles, ...validFiles]);
+    filesArray.forEach((f) => {
+      const error = validateFile(f);
+      if (error) {
+        newErrors.push(error);
+      } else {
+        validFiles.push({ file: f, targetFormat: "pdf" });
+      }
+    });
+
+    setSelectedFile((prev) => [...prev, ...validFiles]);
+    if (newErrors.length) setErrors((prev) => [...prev, ...newErrors]);
     e.target.value = "";
   };
 
@@ -51,72 +101,51 @@ const FileConverter = () => {
   };
 
   const convertFiles = async () => {
-    if (selectedFile.length === 0) return;
+    if (!selectedFile.length) return;
 
     setLoading(true);
+    setErrors([]);
 
     try {
-      for (const { file, targetFormat } of selectedFile) {
-        const sourceFormat = file.name.split(".").pop().toLowerCase();
+      await Promise.all(
+        selectedFile.map(async ({ file, targetFormat }) => {
+          const sourceFormat = file.name.split(".").pop().toLowerCase();
 
-        const formData = new FormData();
-        formData.append("file", file);
+          const formData = new FormData();
+          formData.append("file", file);
 
-        const res = await fetch(
-          `https://v2.convertapi.com/convert/${sourceFormat}/to/${targetFormat}?Secret=${API_KEY}`,
-          {
-            method: "POST",
-            body: formData,
+          const res = await fetch(
+            `https://v2.convertapi.com/convert/${sourceFormat}/to/${targetFormat}?Secret=${API_KEY}`,
+            { method: "POST", body: formData }
+          );
+
+          if (!res.ok) {
+            throw new Error(`Failed to convert ${file.name}`);
           }
-        );
 
-        if (!res.ok) throw new Error(`Failed to convert ${file.name}`);
+          const data = await res.json();
+          const fileInfo = data.Files[0];
 
-        const data = await res.json();
-        const fileInfo = data.Files[0];
+          const blob = base64ToBlob(
+            fileInfo.FileData,
+            getMimeType(targetFormat)
+          );
 
-        const byteCharacters = atob(fileInfo.FileData);
-        const byteNumbers = new Array(byteCharacters.length);
-        for (let i = 0; i < byteCharacters.length; i++) {
-          byteNumbers[i] = byteCharacters.charCodeAt(i);
-        }
-        const byteArray = new Uint8Array(byteNumbers);
-        const blob = new Blob([byteArray], { type: getMimeType(targetFormat) });
-
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement("a");
-        a.href = url;
-        a.download = `${file.name.split(".")[0]}.${targetFormat}`;
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
-        URL.revokeObjectURL(url);
-      }
+          const url = URL.createObjectURL(blob);
+          const a = document.createElement("a");
+          a.href = url;
+          a.download = `${file.name.split(".")[0]}.${targetFormat}`;
+          document.body.appendChild(a);
+          a.click();
+          document.body.removeChild(a);
+          URL.revokeObjectURL(url);
+        })
+      );
     } catch (err) {
       console.error("Conversion error:", err);
-      alert("Conversion failed. Check console for details.");
+      setErrors((prev) => [...prev, "Conversion failed. Please try again."]);
     } finally {
       setLoading(false);
-    }
-  };
-
-  // Helper to set MIME type for Blob
-  const getMimeType = (format) => {
-    switch (format) {
-      case "pdf":
-        return "application/pdf";
-      case "jpg":
-        return "image/jpeg";
-      case "jpeg":
-        return "image/jpeg";
-      case "png":
-        return "image/png";
-      case "webp":
-        return "image/webp";
-      case "docx":
-        return "application/vnd.openxmlformats-officedocument.wordprocessingml.document";
-      default:
-        return "application/octet-stream";
     }
   };
 
@@ -124,28 +153,31 @@ const FileConverter = () => {
     <>
       {selectedFile.length === 0 ? (
         <UploadImage
-          heading="Upload an image to convert to a different format "
+          heading="Easily convert your image or file to another format"
           image={ConvertFiles}
-          multiple={true}
+          buttonText="Upload image or files"
+          cardText="Or drop an image or files here"
+          multiple
           onDropFiles={handleFileDrop}
-          accept={{
-            "image/png": [".png"],
-            "image/jpeg": [".jpeg", ".jpg"],
-            "image/webp": [".webp"],
-            "application/pdf": [".pdf"],
-            "application/vnd.openxmlformats-officedocument.wordprocessingml.document":
-              [".docx"],
-          }}
+          accept={ACCEPTED_FILE_TYPES}
         />
       ) : (
         <div className="mt-10 max-w-xl mx-auto w-full overflow-x-hidden">
+          {errors.length > 0 && (
+            <div className="bg-red-100 border border-red-400 text-red-700 p-3 rounded mb-3">
+              {errors.map((err, i) => (
+                <div key={i}>{err}</div>
+              ))}
+            </div>
+          )}
+
           <div className="flex justify-between items-center">
             <input
               type="file"
               id="file"
               hidden
               multiple
-              accept=".png, .jpeg, .jpg, .webp, .pdf, .docx"
+              accept={Object.values(ACCEPTED_FILE_TYPES).flat().join(", ")}
               onChange={addFiles}
             />
 
@@ -170,54 +202,52 @@ const FileConverter = () => {
                 <h1>{upload.file.name}</h1>
                 <CircleX
                   onClick={() => fileToRemove(upload)}
+                  title="Remove file"
                   className="text-neutral-500 cursor-pointer block sm:hidden"
                 />
               </div>
 
-              <div className="flex  sm:flex-row text-center items-center gap-5">
+              <div className="flex sm:flex-row text-center items-center gap-5">
                 <h1 className="text-sm text-left">Output:</h1>
-
                 <select
-                  className="border "
+                  className="border"
                   value={upload.targetFormat}
                   onChange={(e) => updateFormat(index, e.target.value)}
                 >
-                  <option value="pdf">PDF</option>
-                  <option value="jpg">JPEG</option>
-                  <option value="png">PNG</option>
-                  <option value="webp">WebP</option>
+                  {ALLOWED_FORMATS.map((fmt) => (
+                    <option key={fmt.value} value={fmt.value}>
+                      {fmt.label}
+                    </option>
+                  ))}
                 </select>
               </div>
+
               <CircleX
                 onClick={() => fileToRemove(upload)}
+                title="Remove file"
                 className="text-neutral-500 cursor-pointer hidden sm:block"
               />
             </div>
           ))}
 
           <div className="flex justify-end mt-3">
-            {loading ? (
-              <button
-                disabled={loading}
-                onClick={convertFiles}
-                className="text-white cursor-pointer bg-neutral-400 py-2 px-6 rounded-full  duration-300 flex items-center gap-2"
-              >
-                Converting...
-                <Download size={16} />
-              </button>
-            ) : (
-              <button
-                onClick={convertFiles}
-                className="text-white cursor-pointer bg-violet-400 py-2 px-6 rounded-full hover:bg-violet-500 transition-colors duration-300 flex items-center gap-2"
-              >
-                Convert
-                <Download size={16} />
-              </button>
-            )}
+            <button
+              disabled={loading}
+              onClick={convertFiles}
+              className={`text-white cursor-pointer py-2 px-6 rounded-full duration-300 flex items-center gap-2 ${
+                loading
+                  ? "bg-neutral-400"
+                  : "bg-violet-400 hover:bg-violet-500 transition-colors"
+              }`}
+            >
+              {loading ? "Converting..." : "Convert"}
+              <Download size={16} />
+            </button>
           </div>
         </div>
       )}
     </>
   );
 };
+
 export default FileConverter;
