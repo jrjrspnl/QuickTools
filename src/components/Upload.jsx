@@ -5,6 +5,8 @@ import { useDropzone } from "react-dropzone";
 export const UploadImage = ({
   heading,
   image,
+  buttonText,
+  cardText,
   multiple = false,
   accept,
   onDropFiles,
@@ -60,13 +62,9 @@ export const UploadImage = ({
               <input {...getInputProps()} />
               <button className="text-white cursor-pointer bg-violet-400 py-2 px-5 flex items-center gap-2 rounded-full shadow-md hover:bg-violet-500 transition-colors duration-300">
                 <LuImagePlus size={20} />
-                Upload Image
+                {buttonText}
               </button>
-              <p className="text-sm font-base">
-                {isDragActive
-                  ? "Drop the files here ..."
-                  : "Or drop an image here"}
-              </p>
+              <p className="text-sm font-base">{cardText}</p>
             </div>
           </div>
         )}
