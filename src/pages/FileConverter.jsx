@@ -150,7 +150,7 @@ const FileConverter = () => {
             />
 
             <label htmlFor="file">
-              <span className="cursor-pointer border-2 border-violet-400 py-1 px-5 rounded-lg hover:bg-violet-500 transition-colors duration-300 text-neutral-600 hover:text-white flex items-center gap-2">
+              <span className="cursor-pointer text-sm sm:text-base border-2 border-violet-400 py-1 px-5 rounded-lg hover:bg-violet-500 transition-colors duration-300 text-neutral-600 hover:text-white flex items-center gap-2">
                 <FilePlus size={16} />
                 Add more files
               </span>
