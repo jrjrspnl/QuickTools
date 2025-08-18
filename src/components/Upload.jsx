@@ -6,7 +6,6 @@ export const UploadImage = ({
   heading,
   image,
   buttonText,
-  cardText,
   multiple = false,
   accept,
   onDropFiles,
@@ -64,7 +63,7 @@ export const UploadImage = ({
                 <LuImagePlus size={20} />
                 {buttonText}
               </button>
-              <p className="text-sm font-base">{cardText}</p>
+              <p className="text-sm font-base">Or drop file here</p>
             </div>
           </div>
         )}
