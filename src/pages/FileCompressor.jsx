@@ -206,7 +206,7 @@ const FileCompressor = () => {
               {selectedFile.map((upload, index) => (
                 <div
                   key={index}
-                  className="text-sm md:text-base flex flex-col sm:flex-row justify-between border border-violet-400 rounded-md bg-white max-w-2xl mx-auto text-neutral-600 p-3 my-2"
+                  className="text-sm md:text-base flex justify-between border border-violet-400 rounded-md bg-white max-w-2xl mx-auto text-neutral-600 p-3 my-2"
                 >
                   <div>
                     <h1>{upload.file.name}</h1>
