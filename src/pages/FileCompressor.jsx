@@ -122,7 +122,6 @@ const FileCompressor = () => {
       return [...prev, ...filtered];
     });
 
-    // reset input so selecting the same file again works
     event.target.value = "";
   };
 
@@ -136,12 +135,24 @@ const FileCompressor = () => {
           buttonText="Upload image or files"
           cardText="Or drop an image or files here"
           onDropFiles={handleFiles}
+          accept={{
+            "image/png": [".png"],
+            "image/jpeg": [".jpeg", ".jpg"],
+            "image/webp": [".webp"],
+          }}
         />
       ) : (
         <div className="mt-10 max-w-xl mx-auto w-full overflow-x-hidden">
           {compressedFiles.length === 0 && (
             <div className="flex justify-between items-center">
-              <input type="file" id="file" hidden multiple onChange={addFile} />
+              <input
+                type="file"
+                id="file"
+                hidden
+                multiple
+                accept="image/*"
+                onChange={addFile}
+              />
               <label htmlFor="file">
                 <span className="cursor-pointer text-sm sm:text-base border-2 border-violet-400 py-1 px-5 rounded-lg hover:bg-violet-500 transition-colors duration-300 text-neutral-600 hover:text-white flex items-center gap-2">
                   <FilePlus size={16} />
