@@ -173,10 +173,10 @@ const FileCompressor = () => {
               {compressedFiles.map((upload, index) => (
                 <div
                   key={index}
-                  className="text-sm md:text-base flex  sm:flex-row justify-between border border-violet-400 rounded-md bg-white max-w-2xl mx-auto text-neutral-600 p-3 my-2"
+                  className="text-sm md:text-base flex justify-between border border-violet-400 rounded-md bg-white max-w-2xl mx-auto text-neutral-600 p-3 my-2"
                 >
                   <span>{upload.file.name}</span>
-                  <div className="flex gap-3">
+                  <div className="flex gap-3 text-sm">
                     <span className="line-through text-red-500">
                       {upload.originalSize}
                     </span>
