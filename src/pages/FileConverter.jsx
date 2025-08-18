@@ -156,7 +156,6 @@ const FileConverter = () => {
           heading="Easily convert your image or file to another format"
           image={ConvertFiles}
           buttonText="Upload image or files"
-          cardText="Or drop an image or files here"
           multiple
           onDropFiles={handleFileDrop}
           accept={ACCEPTED_FILE_TYPES}

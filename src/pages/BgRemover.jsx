@@ -152,7 +152,6 @@ const BgRemover = () => {
             heading="Remove your image’s background in seconds"
             image={alden}
             buttonText="Upload image"
-            cardText="Or drop an image here"
             multiple={false}
             accept={{
               "image/png": [".png"],

@@ -138,8 +138,7 @@ const FileCompressor = () => {
           heading="Upload an image to compress it and reduce its size."
           image={CompressFiles}
           multiple
-          buttonText="Upload image or files"
-          cardText="Or drop an image or files here"
+          buttonText="Upload image"
           onDropFiles={handleFiles}
           accept={{
             "image/png": [".png"],
