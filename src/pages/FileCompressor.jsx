@@ -84,8 +84,9 @@ const FileCompressor = () => {
 
         results.push({
           file: compressed,
+          originalSize: upload.formattedSize, // ✅ keep original size
           formattedSize: formatFileSize(compressed.size),
-          downloadUrl, // ✅ store URL
+          downloadUrl,
         });
       }
 
@@ -143,7 +144,14 @@ const FileCompressor = () => {
                   className="text-sm md:text-base flex flex-col sm:flex-row justify-between border border-violet-400 rounded-md bg-white max-w-2xl mx-auto text-neutral-600 p-3 my-2"
                 >
                   <span>{upload.file.name}</span>
-                  <span>{upload.formattedSize}</span>
+                  <div className="flex gap-3">
+                    <span className="line-through text-red-500">
+                      {upload.originalSize}
+                    </span>
+                    <span className="text-green-600">
+                      {upload.formattedSize}
+                    </span>
+                  </div>
                 </div>
               ))}
               <div className="flex justify-end mt-3">
