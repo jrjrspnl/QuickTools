@@ -125,6 +125,12 @@ const FileCompressor = () => {
     event.target.value = "";
   };
 
+  const removeFile = (remove) => {
+    setSelectedFile((files) =>
+      files.filter((f) => f.file.name !== remove.file.name)
+    );
+  };
+
   return (
     <div>
       {selectedFile.length === 0 ? (
@@ -216,7 +222,10 @@ const FileCompressor = () => {
                   </div>
 
                   <div className="flex items-center">
-                    <CircleX className="text-neutral-500 cursor-pointer" />
+                    <CircleX
+                      onClick={() => removeFile(upload)}
+                      className="text-neutral-500 cursor-pointer"
+                    />
                   </div>
                 </div>
               ))}
