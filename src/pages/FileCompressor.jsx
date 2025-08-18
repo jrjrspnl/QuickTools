@@ -182,7 +182,7 @@ const FileCompressor = () => {
                   className="text-sm md:text-base flex justify-between border border-violet-400 rounded-md bg-white max-w-2xl mx-auto text-neutral-600 p-3 my-2"
                 >
                   <span>{upload.file.name}</span>
-                  <div className="flex gap-3 text-sm">
+                  <div className="flex gap-3 text-sm items-center">
                     <span className="line-through text-red-500">
                       {upload.originalSize}
                     </span>
