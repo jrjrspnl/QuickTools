@@ -109,29 +109,50 @@ const FileCompressor = () => {
     });
   };
 
+  const addFile = (event) => {
+    const newFiles = Array.from(event.target.files).map((file) => ({
+      file,
+      formattedSize: formatFileSize(file.size),
+    }));
+
+    setSelectedFile((prev) => {
+      const filtered = newFiles.filter(
+        (newFile) => !prev.some((f) => f.file.name === newFile.file.name)
+      );
+      return [...prev, ...filtered];
+    });
+
+    // reset input so selecting the same file again works
+    event.target.value = "";
+  };
+
   return (
     <div>
       {selectedFile.length === 0 ? (
         <UploadImage
           heading="Upload an image to compress it and reduce its size."
           image={CompressFiles}
+          multiple
           buttonText="Upload image or files"
           cardText="Or drop an image or files here"
           onDropFiles={handleFiles}
         />
       ) : (
         <div className="mt-10 max-w-xl mx-auto w-full overflow-x-hidden">
-          <div className="flex justify-between items-center">
-            <label htmlFor="file">
-              <span className="cursor-pointer text-sm sm:text-base border-2 border-violet-400 py-1 px-5 rounded-lg hover:bg-violet-500 transition-colors duration-300 text-neutral-600 hover:text-white flex items-center gap-2">
-                <FilePlus size={16} />
-                Add more files
-              </span>
-            </label>
-            <h1 className="text-sm text-neutral-500">
-              Added {selectedFile.length} Files
-            </h1>
-          </div>
+          {compressedFiles.length === 0 && (
+            <div className="flex justify-between items-center">
+              <input type="file" id="file" hidden multiple onChange={addFile} />
+              <label htmlFor="file">
+                <span className="cursor-pointer text-sm sm:text-base border-2 border-violet-400 py-1 px-5 rounded-lg hover:bg-violet-500 transition-colors duration-300 text-neutral-600 hover:text-white flex items-center gap-2">
+                  <FilePlus size={16} />
+                  Add more files
+                </span>
+              </label>
+              <h1 className="text-sm text-neutral-500">
+                Added {selectedFile.length} Files
+              </h1>
+            </div>
+          )}
 
           {compressedFiles.length > 0 ? (
             <div className="mt-5">
