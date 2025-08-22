@@ -13,7 +13,7 @@ const BgRemover = () => {
 
   const handleFilesAccepted = async (files, rejectedFiles) => {
     if (rejectedFiles.length > 0) {
-      setError("Please upload a valid image file (PNG, JPEG, JPG, or WEBP)");
+      alert("Please upload a valid image file (PNG, JPEG, JPG, or WEBP)");
       return;
     }
     if (files.length === 0) return;
@@ -30,7 +30,7 @@ const BgRemover = () => {
     );
 
     if (!isValidType && !isValidExtension) {
-      setError("Please upload a valid image file (PNG, JPEG, JPG, or WEBP)");
+      alert("Please upload a valid image file (PNG, JPEG, JPG, or WEBP)");
       return;
     }
 
