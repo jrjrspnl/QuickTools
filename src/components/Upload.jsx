@@ -1,7 +1,7 @@
 import React, { useCallback, useState } from "react";
 import { LuImagePlus } from "react-icons/lu";
 import { useDropzone } from "react-dropzone";
-
+import { Button } from "./Buttons";
 export const UploadImage = ({
   heading,
   image,
@@ -59,10 +59,7 @@ export const UploadImage = ({
           >
             <div className="flex flex-col items-center justify-center h-full gap-5">
               <input {...getInputProps()} />
-              <button className="text-white cursor-pointer bg-violet-400 py-2 px-5 flex items-center gap-2 rounded-full shadow-md hover:bg-violet-500 transition-colors duration-300">
-                <LuImagePlus size={20} />
-                {buttonText}
-              </button>
+              <Button text={buttonText} icon={LuImagePlus} />
               <p className="text-sm font-base">Or drop a file here</p>
             </div>
           </div>
