@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { UploadImage } from "../components/Upload";
 import CompressFiles from "../assets/compress-files.png";
 import { CircleX, Download, FilePlus } from "lucide-react";
-
+import { Button } from "../components/Buttons";
 const FileCompressor = () => {
   function formatFileSize(bytes) {
     if (bytes < 1024) return `${bytes} B`;
@@ -192,6 +192,7 @@ const FileCompressor = () => {
                 </div>
               ))}
               <div className="flex justify-end mt-3">
+                <Button onClick={handleCompress} disabled={loading} />
                 <button
                   onClick={handleDownloadAll}
                   disabled={loading}
